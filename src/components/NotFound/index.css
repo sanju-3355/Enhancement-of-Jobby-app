@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Roboto';
+  background-color: #000000;
+  background-size: cover;
+}
+.image {
+  width: 350px;
+  margin-bottom: 10px;
+}
+.heading {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+}
+.text {
+  color: #cbd5e1;
+  font-size: 18px;
+}
+@media (min-width: 768px) {
+  .image {
+    width: 450px;
+    margin-bottom: 15px;
+  }
+  .heading {
+    font-size: 32px;
+  }
+  .text {
+    font-size: 20px;
+  }
+}
