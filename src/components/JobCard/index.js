@@ -8,15 +8,14 @@ const JobCard = props => {
   const {jobDetails} = props
   const {
     companyLogoUrl,
-    id,
     employmentType,
     jobDescription,
     location,
     packagePerAnnum,
     rating,
     title,
+    id,
   } = jobDetails
-
   return (
     <li className="job-card">
       <Link to={`/jobs/${id}`} className="job-card-link">
@@ -52,4 +51,5 @@ const JobCard = props => {
     </li>
   )
 }
+
 export default JobCard

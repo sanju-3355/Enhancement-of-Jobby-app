@@ -7,3 +7,12 @@
   gap: 16px;
   padding: 12px;
 }
+.similar-job-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #272727;
+  border-radius: 16px;
+  max-width: 355px;
+  gap: 15px;
+  padding: 13px;
+}

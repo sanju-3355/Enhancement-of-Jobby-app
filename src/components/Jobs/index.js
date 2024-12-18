@@ -23,10 +23,11 @@ class Jobs extends Component {
     profileDetails: {},
     profileApiStatus: apiStatusConstants.initial,
     jobsList: [],
-    jobApiStatus: apiStatusConstants.initial,
+    jobsApiStatus: apiStatusConstants.initial,
     searchInput: '',
     activeSalaryRangeId: '',
     employmentTypesChecked: [],
+    locationsChecked: [],
   }
 
   componentDidMount() {
@@ -34,12 +35,13 @@ class Jobs extends Component {
     this.getJobs()
   }
 
-  updateEmploymentTypeChecked = typeId => {
+  updateEmploymentTypesChecked = typeId => {
     const {employmentTypesChecked} = this.state
     let updatedList = employmentTypesChecked
-
     if (employmentTypesChecked.includes(typeId)) {
-      updatedList = employmentTypesChecked.filter(each => each !== typeId)
+      updatedList = employmentTypesChecked.filter(
+        eachType => eachType !== typeId,
+      )
     } else {
       updatedList = [...updatedList, typeId]
     }
@@ -47,67 +49,80 @@ class Jobs extends Component {
     this.setState({employmentTypesChecked: updatedList}, this.getJobs)
   }
 
+  updateLocationsChecked = typeId => {
+    const {locationsChecked} = this.state
+    let updatedList = locationsChecked
+    if (locationsChecked.includes(typeId)) {
+      updatedList = locationsChecked.filter(eachType => eachType !== typeId)
+    } else {
+      updatedList = [...updatedList, typeId]
+    }
+
+    this.setState({locationsChecked: updatedList}, this.getJobs)
+  }
+
   updateSalaryRangeId = activeSalaryRangeId =>
     this.setState({activeSalaryRangeId}, this.getJobs)
 
   getJobs = async () => {
-    this.setState({jobApiStatus: apiStatusConstants.inProgress})
-    const {activeSalaryRangeId, employmentTypesChecked, searchInput} =
-      this.state
+    this.setState({jobsApiStatus: apiStatusConstants.inProgress})
+
+    const {
+      activeSalaryRangeId,
+      employmentTypesChecked,
+      searchInput,
+      locationsChecked,
+    } = this.state
 
     const employTypes = employmentTypesChecked.join(',')
-    const token = Cookies.get('jwt_token')
-    const url = `https://apis.ccbp.in/jobs?employment_type=${employTypes}&minimum_package=${activeSalaryRangeId}&search=${searchInput}`
+    const locater = locationsChecked.join(',')
+    const jwtToken = Cookies.get('jwt_token')
+    const apiUrl = `https://apis.ccbp.in/jobs?employment_type=${employTypes}&minimum_package=${activeSalaryRangeId}&search=${searchInput}&location=${locater}`
+
     const options = {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
       },
-      medthod: 'GET',
+      method: 'GET',
     }
-
-    const response = await fetch(url, options)
+    const response = await fetch(apiUrl, options)
     const data = await response.json()
-
     if (response.ok === true) {
       const {jobs} = data
-      const updatedData = jobs.map(each => ({
-        companyLogoUrl: each.company_logo_url,
-        employmentType: each.employment_type,
-        id: each.id,
-        jobDescription: each.job_description,
-        location: each.location,
-        rating: each.rating,
-        title: each.title,
-        packagePerAnnum: each.package_per_annum,
+      const updatedData = jobs.map(eachJob => ({
+        companyLogoUrl: eachJob.company_logo_url,
+        employmentType: eachJob.employment_type,
+        id: eachJob.id,
+        jobDescription: eachJob.job_description,
+        location: eachJob.location,
+        packagePerAnnum: eachJob.package_per_annum,
+        rating: eachJob.rating,
+        title: eachJob.title,
       }))
       this.setState({
         jobsList: updatedData,
-        jobApiStatus: apiStatusConstants.success,
+        jobsApiStatus: apiStatusConstants.success,
       })
     } else {
-      this.setState({
-        jobApiStatus: apiStatusConstants.failure,
-      })
+      this.setState({jobsApiStatus: apiStatusConstants.failure})
     }
   }
 
   getProfileDetails = async () => {
     this.setState({profileApiStatus: apiStatusConstants.inProgress})
 
-    const token = Cookies.get('jwt_token')
+    const jwtToken = Cookies.get('jwt_token')
+    const apiUrl = 'https://apis.ccbp.in/profile'
     const options = {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
       },
-      medthod: 'GET',
+      method: 'GET',
     }
-
-    const response = await fetch('https://apis.ccbp.in/profile', options)
+    const response = await fetch(apiUrl, options)
     const data = await response.json()
-
     if (response.ok === true) {
       const profileDetails = data.profile_details
-
       const updatedData = {
         name: profileDetails.name,
         profileImageUrl: profileDetails.profile_image_url,
@@ -134,6 +149,7 @@ class Jobs extends Component {
           onChange={e => this.setState({searchInput: e.target.value})}
         />
         <button
+          aria-label="Save"
           className="search-button"
           type="button"
           data-testid="searchButton"
@@ -151,6 +167,7 @@ class Jobs extends Component {
       profileApiStatus,
       activeSalaryRangeId,
       employmentTypesChecked,
+      locationsChecked,
     } = this.state
     return (
       <div className="side-bar">
@@ -164,8 +181,10 @@ class Jobs extends Component {
         <FiltersGroup
           updateSalaryRangeId={this.updateSalaryRangeId}
           activeSalaryRangeId={activeSalaryRangeId}
-          updateEmploymentTypeChecked={this.updateEmploymentTypeChecked}
+          updateEmploymentTypesChecked={this.updateEmploymentTypesChecked}
           employmentTypesChecked={employmentTypesChecked}
+          updateLocationsChecked={this.updateLocationsChecked}
+          locationsChecked={locationsChecked}
         />
       </div>
     )
@@ -203,7 +222,7 @@ class Jobs extends Component {
   }
 
   renderJobsLoaderView = () => (
-    <div className="loader-container" data-testid="loader">
+    <div className="jobs-loader-container" data-testid="loader">
       <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
     </div>
   )
@@ -230,8 +249,9 @@ class Jobs extends Component {
   )
 
   renderJobsBasedOnAPiStatus = () => {
-    const {jobApiStatus} = this.state
-    switch (jobApiStatus) {
+    const {jobsApiStatus} = this.state
+
+    switch (jobsApiStatus) {
       case apiStatusConstants.inProgress:
         return this.renderJobsLoaderView()
       case apiStatusConstants.success:

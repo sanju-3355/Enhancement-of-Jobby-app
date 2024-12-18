@@ -12,24 +12,23 @@ const Header = props => {
     const {history} = props
     history.replace('/login')
   }
-
   return (
     <nav className="navbar">
-      <div className="navbar-container">
+      <div className="nav-container">
         <Link to="/">
           <img
             src="https://assets.ccbp.in/frontend/react-js/logo-img.png"
             alt="website logo"
-            className="logo"
+            className="home-website-logo"
           />
         </Link>
-        <ul className="nav-list">
+        <ul className="nav-items">
           <li>
             <Link to="/" className="nav-link-lg">
               Home
             </Link>
             <Link to="/" className="nav-link-sm">
-              <AiFillHome className="small-icons" />
+              <AiFillHome className="small-header-icons" />
             </Link>
           </li>
           <li>
@@ -37,20 +36,25 @@ const Header = props => {
               Jobs
             </Link>
             <Link to="/jobs" className="nav-link-sm">
-              <BsFillBriefcaseFill className="small-icons" />
+              <BsFillBriefcaseFill className="small-header-icons" />
             </Link>
           </li>
-          <li className="logout-sm-item">
+          <li className="logout-btn-list-item-small">
             <button
+              aria-label="Save"
               type="button"
+              className="logout-button-sm"
               onClick={onClickLogout}
-              className="logout-sm-btn"
             >
-              <FiLogOut className="logout-icon" />
+              <FiLogOut className="logout-icon-sm" />
             </button>
           </li>
         </ul>
-        <button type="button" onClick={onClickLogout} className="logout-lg-btn">
+        <button
+          type="button"
+          className="logout-button-lg"
+          onClick={onClickLogout}
+        >
           Logout
         </button>
       </div>

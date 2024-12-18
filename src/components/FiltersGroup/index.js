@@ -1,5 +1,6 @@
 import './index.css'
 
+// These are the lists used in the application. You can move them to any component needed.
 const employmentTypesList = [
   {
     label: 'Full Time',
@@ -38,31 +39,54 @@ const salaryRangesList = [
   },
 ]
 
+const locationsList = [
+  {
+    label: 'Hyderabad',
+    locationId: 'HYDERABAD',
+  },
+  {
+    label: 'Bangalore',
+    locationId: 'BANGALORE',
+  },
+  {
+    label: 'Chennai',
+    locationId: 'CHENNAI',
+  },
+  {
+    label: 'Delhi',
+    locationId: 'DELHI',
+  },
+  {
+    label: 'Mumbai',
+    locationId: 'MUMBAI',
+  },
+]
+
 const FiltersGroup = props => {
   const renderEmploymentTypesList = () => {
-    const {updateEmploymentTypeChecked} = props
+    const {updateEmploymentTypesChecked} = props
 
-    return employmentTypesList.map(each => {
-      const updateTypesList = () =>
-        updateEmploymentTypeChecked(each.employmentTypeId)
+    return employmentTypesList.map(eachType => {
+      const updateTypeslist = () =>
+        updateEmploymentTypesChecked(eachType.employmentTypeId)
 
       return (
-        <li className="filters-list-item" key={each.employmentTypeId}>
+        <li className="fliters-list-item" key={eachType.employmentTypeId}>
           <input
             type="checkbox"
             className="checkbox-input"
-            onChange={updateTypesList}
-            id={each.employmentTypeId}
+            id={eachType.employmentTypeId}
+            onChange={updateTypeslist}
           />
-          <label htmlFor={each.employmentTypeId} className="filter-label">
-            {each.label}
+          <label htmlFor={eachType.employmentTypeId} className="filter-label">
+            {eachType.label}
           </label>
         </li>
       )
     })
   }
 
-  const renderEmploymentType = () => (
+  const renderEmploymentTypes = () => (
     <>
       <h1 className="filter-heading">Type of Employment</h1>
       <ul className="filters-list">{renderEmploymentTypesList()}</ul>
@@ -72,42 +96,75 @@ const FiltersGroup = props => {
   const renderSalaryRangesList = () => {
     const {updateSalaryRangeId, activeSalaryRangeId} = props
 
-    return salaryRangesList.map(each => {
-      const onChangeSalaryRange = () => updateSalaryRangeId(each.salaryRangeId)
+    return salaryRangesList.map(eachRange => {
+      const onChangeRange = () => updateSalaryRangeId(eachRange.salaryRangeId)
 
-      const isChecked = each.salaryRangeId === activeSalaryRangeId
+      const isChecked = eachRange.salaryRangeId === activeSalaryRangeId
 
       return (
-        <li className="filters-list-item" key={each.salaryRangeId}>
+        <li className="fliters-list-item" key={eachRange.salaryRangeId}>
           <input
             type="radio"
             className="checkbox-input"
-            checked={isChecked}
+            id={eachRange.salaryRangeId}
             name="salary ranges"
-            onChange={onChangeSalaryRange}
-            id={each.salaryRangeId}
+            onChange={onChangeRange}
+            checked={isChecked}
           />
-          <label className="filter-label" htmlFor={each.salaryRangeId}>
-            {each.label}
+          <label htmlFor={eachRange.salaryRangeId} className="filter-label">
+            {eachRange.label}
           </label>
         </li>
       )
     })
   }
 
-  const renderSalaryRange = () => (
+  const renderSalaryRangesTypes = () => (
     <>
       <h1 className="filter-heading">Salary Range</h1>
       <ul className="filters-list">{renderSalaryRangesList()}</ul>
     </>
   )
 
+  const renderLocationsList = () => {
+    const {updateLocationsChecked} = props
+
+    return locationsList.map(eachType => {
+      const updateLocationslist = () =>
+        updateLocationsChecked(eachType.locationId)
+
+      return (
+        <li className="fliters-list-item" key={eachType.locationId}>
+          <input
+            type="checkbox"
+            className="checkbox-input"
+            id={eachType.locationId}
+            onChange={updateLocationslist}
+          />
+          <label htmlFor={eachType.locationId} className="filter-label">
+            {eachType.label}
+          </label>
+        </li>
+      )
+    })
+  }
+
+  const renderLocations = () => (
+    <>
+      <h1 className="filter-heading">Location</h1>
+      <ul className="filters-list">{renderLocationsList()}</ul>
+    </>
+  )
+
   return (
     <div className="filters-group-container">
-      {renderEmploymentType()}
+      {renderEmploymentTypes()}
       <hr className="separator" />
-      {renderSalaryRange()}
+      {renderSalaryRangesTypes()}
+      <hr className="separator" />
+      {renderLocations()}
     </div>
   )
 }
+
 export default FiltersGroup
